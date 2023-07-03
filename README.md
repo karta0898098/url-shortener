@@ -24,11 +24,14 @@ docker-compose -p url_shortener -f ./deployments/environment/docker-compose.dev.
 You can use this db [migrate tool](https://github.com/pressly/goose)-goose or create sql schema by manual.
 If you want to create sql schema
 
-If using goose, Please run this command
+If using goose, Please run this command.
 
 ```shell
 make goose
 ```
+
+**Notice** This project repository test need real database. Before run repository layer uint testing please setup
+database.
 
 ## How To Deploy
 
