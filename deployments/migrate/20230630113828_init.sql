@@ -12,12 +12,3 @@ COMMENT ON COLUMN shortened_urls.original_url IS 'OriginalURL original URL which
 COMMENT ON COLUMN shortened_urls.created_at IS 'CreatedAt the url created at';
 COMMENT ON COLUMN shortened_urls.expired_at IS 'ExpiredAt the url expired at';
 
--- +goose StatementBegin
-SELECT 'up SQL query';
--- +goose StatementEnd
-
--- +goose Down
-DROP TABLE IF EXISTS shortened_urls;
--- +goose StatementBegin
-SELECT 'down SQL query';
--- +goose StatementEnd

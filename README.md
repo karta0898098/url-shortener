@@ -21,6 +21,15 @@ or
 docker-compose -p url_shortener -f ./deployments/environment/docker-compose.dev.yaml up -d
 ```
 
+You can use this db [migrate tool](https://github.com/pressly/goose)-goose or create sql schema by manual.
+If you want to create sql schema
+
+If using goose, Please run this command
+
+```shell
+make goose
+```
+
 ## How To Deploy
 
 using docker deploy
@@ -30,18 +39,10 @@ make docker-deploy
 ```
 
 This command will auto run docker build and run docker compose.
-after this command done need create sql schema.
+The docker compose file is `deployments/environment/docker-compose.yaml`
 
-You can use this db [migrate tool](https://github.com/pressly/goose)-goose or create sql schema by manual.
-If you want to create sql schema, Please see project folder *./deployments/migrate/20230630113828_init.sql*
-
-If using goose, Please run this command
-
-```shell
-make goose
-```
-
-**Notice** The app config will adopt `deployments/config/app.dev.yaml` when using docker deploy.
+**Notice** The app config will adopt `deployments/config/app.dev.yaml` when using docker deploy. If want to change http
+server port, please update serverHost in app.dev.yaml
 
 ## Design Concept
 
