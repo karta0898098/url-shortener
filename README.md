@@ -69,6 +69,14 @@ After trade off, have decided to use a combination of random tokens and a Bloom 
 Use bloom filter allows for quick verification of token existence. If a token already exists, a new one can be
 generated.
 
+**Bloom filter false positive**
+The random token solution should check key collision issues. You will curios bloom filter false positive. Should I hande
+it?
+In my opinion we can ignore false positive. Because we want unique id then just share the short url is not exist.
+
+Consider key collision, the system need key generator server pre generator some keys when high concurrency case to
+reduce create keys time.
+
 Generate Shorten URL flow
 
 ```mermaid
@@ -92,7 +100,12 @@ Second layer use local cache.
 **Why not using redis?**
 
 In this case, the data for shortened URLs must remain immutable.
-Use local cache then we don't connect to redis.The reason is saves on network I/O and connection time
+Use local cache then we don't connect to redis.The reason is saves on network I/O and connection time.
+
+Also, the system has weak point, It will a lot of request access database when short url not cacheing.
+Maybe we can count which short url is hot data, then warn cache to prevent too many request access database.
+Additional optimize the system, maybe we can collapse the requests and will forward a single request to the origin
+server.
 
 Redirect flow
 
