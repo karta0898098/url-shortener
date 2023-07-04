@@ -8,8 +8,11 @@ An URL shortener using Go programming language.
 
 ## Local Development
 
-You need setup environment first.
-The postgres and redis will be running on docker.
+Need to set up environment first.
+The application service depend on PostgreSQL and Redis.
+
+Provide the docker compose file to set up environment.
+You can run makefile or create environment by manual
 
 ```shell
 make env
@@ -21,8 +24,7 @@ or
 docker-compose -p url_shortener -f ./deployments/environment/docker-compose.dev.yaml up -d
 ```
 
-You can use this db [migrate tool](https://github.com/pressly/goose)-goose or create sql schema by manual.
-If you want to create sql schema
+Also, this project use this db [migrate tool](https://github.com/pressly/goose)-goose to manage database schema.
 
 If using goose, Please run this command.
 
@@ -30,39 +32,44 @@ If using goose, Please run this command.
 make goose
 ```
 
-**Notice** This project repository test need real database. Before run repository layer uint testing please setup
-database.
+**Notice** This project repository test requires a real database. Before running the repository layer unit testing,
+please set up the environment.
 
 ## How To Deploy
 
-using docker deploy
+Provide Docker Compose Deploy
 
 ```shell
 make docker-deploy
 ```
 
-This command will auto run docker build and run docker compose.
+This command will auto run docker build and run docker compose and auto create sql schema.
 The docker compose file is `deployments/environment/docker-compose.yaml`
 
-**Notice** The app config will adopt `deployments/config/app.dev.yaml` when using docker deploy. If want to change http
+**Notice** The app config will adopt `deployments/config/app.dev.yaml` when using docker deploy. If you want to change
+http
 server port, please update serverHost in app.dev.yaml
 
 ## Design Concept
 
-Analyze URL shortener system requirement，There's two key point. One is how to create short url id and How to handle many
-clients access shorten URL simultaneously or
-try to access with non-existent shorten URL, please take performance into account。
+Analyzing the system requirements for a URL shortener, there are two key points:
 
-### How to create short url id?
+1. How to generate short URL IDs.
+2. How to handle simultaneous access to shortened URLs from multiple clients, as well as attempts to access non-existent
+   shortened URLs.
 
-We can use random token solution or snowflake to create shorten url id. In this case I chose random token solution
-because is spent less resource and using snowflake need config key
-generator server. It will make system complex.
+### How to generate short url id?
 
-After trade off I chose random token and bloom filter to handle this system.
-Use bloom filter can quickly check token is existed. If token exist then just create new one.
+We can use a random token solution or Snowflake to create shorten url id. In this case I have chosen the random token
+solution
+because it consumes fewer resources. Using snowflake require to config key
+generator server which would make the system more complex and need maintain key generator server.
 
-Create Shorten URL flow
+After trade off, have decided to use a combination of random tokens and a Bloom filter to handle this system.
+Use bloom filter allows for quick verification of token existence. If a token already exists, a new one can be
+generated.
+
+Generate Shorten URL flow
 
 ```mermaid
 flowchart LR
@@ -76,15 +83,16 @@ flowchart LR
 
 ### How to handle many clients access shorten URL simultaneously?
 
-First layer use Redis Bloom filter.
-
-The bloom filter has lower space complexity and time complexity is O(k), where k
-is the number of hash functions used by the last sub-filter. The feature can quickly check short url is existed and
-reduce access database count.
+The first layer utilizes a Redis Bloom filter. The Bloom filter offers a lower space complexity and a time complexity of
+O(k), where k represents the number of hash functions used by the last sub-filter. This feature enables quick
+verification of the existence of a shortened URL and reduce access database.
 
 Second layer use local cache.
-Why not using redis ? This case shorten url data must be immutable.
-Use local cache can reduce connect to redis network io
+
+**Why not using redis?**
+
+In this case, the data for shortened URLs must remain immutable.
+Use local cache then we don't connect to redis.The reason is saves on network I/O and connection time
 
 Redirect flow
 
@@ -103,12 +111,12 @@ flowchart LR
 
 ### TODO
 
-The database can choose NoSQL. According Shoten url data scheme not have complex query or relation.
-Using NoSQL such as DynamoDB or MongoDB is better than Relational database.
+The database can choose NoSQL. According Shoten url data scheme not have complex query or relationships,
+using NoSQL such as DynamoDB or MongoDB is better suitable than a relational database..
 
-e.g:
+for example:
 
-1. The NoSQL database get data cloud be faster.
+1. The NoSQL database get data will be faster.
 2. The DynamoDB provider TTL feature. When shorten url is expired can use this feature to prevent scan all expire data.
 
 ### 3rd party lib using
@@ -123,7 +131,7 @@ Pick a few interesting ones to talk about.
     - Extend golang error with stack
 3. [github.com/redis/go-redis](github.com/redis/go-redis)
     - [Redis official recommend lib](https://redis.io/resources/clients/#go)
-    - thread-safe
+    - Thread-safe
     - Friendly API use
 4. [github.com/rs/zerolog](github.com/rs/zerolog)
     - Blazing fast
