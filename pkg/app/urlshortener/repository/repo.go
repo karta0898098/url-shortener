@@ -63,7 +63,7 @@ func (repo *RepoImpl) StoreShortenedURL(ctx context.Context, shortenedURL *entit
 	if err != nil {
 		return errors.Wrapf(
 			errors.ErrInternal,
-			"failed to store shortenedURL %v", shortenedURL,
+			"failed to store shortenedURL %v err =%v", shortenedURL, err,
 		)
 	}
 
