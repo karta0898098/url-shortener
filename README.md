@@ -125,7 +125,7 @@ flowchart LR
 ### TODO
 
 The database can choose NoSQL. According Shoten url data scheme not have complex query or relationships,
-using NoSQL such as DynamoDB or MongoDB is better suitable than a relational database..
+using NoSQL such as DynamoDB or MongoDB is better suitable than a relational database.
 
 for example:
 
